@@ -27,8 +27,7 @@ export default class Calculator {
         return results;
     }
 
-    parse(query) {
-        var tokens = this.tokenise(query);
+    parse(tokens) {
         var position = 0;
 
         function peek() {
@@ -88,7 +87,7 @@ export default class Calculator {
                 consume(")");
                 return expression;
             } else {
-                throw new SyntaxError("expected a number, a variable, or parentheses");
+                throw new SyntaxError("expected a number, variable, or function");
             }
         }
 
@@ -138,32 +137,24 @@ export default class Calculator {
         return result;
     }
 
-    evaluateAsFloat(query) {
-        var variables = this.variables;
-        console.log(variables);
-        function evaluate(obj) {
-            switch (obj.type) {
-                case "sin": return Math.sin(evaluate(obj.argument));
-                case "cos": return Math.cos(evaluate(obj.argument));
-                case "tan": return Math.tan(evaluate(obj.argument));
-                case "log": return Math.log10(evaluate(obj.argument));
-                case "ln": return Math.log(evaluate(obj.argument));
-                case "sqrt": return Math.sqrt(evaluate(obj.argument));
-                case "number": return parseFloat(obj.value);
-                case "name": return variables[obj.id] || 0;
-                case "+": return evaluate(obj.left) + evaluate(obj.right);
-                case "-": return evaluate(obj.left) - evaluate(obj.right);
-                case "*": return evaluate(obj.left) * evaluate(obj.right);
-                case "/":
-                    if (evaluate(obj.right) === 0)
-                        throw new Error("division by zero");
-                    return evaluate(obj.left) / evaluate(obj.right);
-                case "^": return Math.pow(evaluate(obj.left), evaluate(obj.right));
-            }
+    evaluate(branch) {
+        switch (branch.type) {
+            case "sin": return Math.sin(this.evaluate(branch.argument));
+            case "cos": return Math.cos(this.evaluate(branch.argument));
+            case "tan": return Math.tan(this.evaluate(branch.argument));
+            case "log": return Math.log10(this.evaluate(branch.argument));
+            case "ln": return Math.log(this.evaluate(branch.argument));
+            case "sqrt": return Math.sqrt(this.evaluate(branch.argument));
+            case "number": return parseFloat(branch.value);
+            case "name": return this.variables[branch.id] || 0;
+            case "+": return this.evaluate(branch.left) + this.evaluate(branch.right);
+            case "-": return this.evaluate(branch.left) - this.evaluate(branch.right);
+            case "*": return this.evaluate(branch.left) * this.evaluate(branch.right);
+            case "/":
+                if (this.evaluate(branch.right) === 0)
+                    throw new Error("division by zero");
+                return this.evaluate(branch.left) / this.evaluate(branch.right);
+            case "^": return Math.pow(this.evaluate(branch.left), this.evaluate(branch.right));
         }
-
-        let result = evaluate(this.parse(query));
-        console.log(result);
-        return parseFloat(result.toFixed(10)).toString();
     }
 }

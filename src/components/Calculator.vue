@@ -20,8 +20,10 @@ export default {
   methods: {
     run() {
       try {
-        console.log(calc.parse(this.query));
-        this.result = calc.evaluateAsFloat(this.query);
+        let tokens = calc.tokenise(this.query);
+        let tree = calc.parse(tokens);
+        let result = calc.evaluate(tree);
+        this.result = parseFloat(result.toFixed(10)).toString();
       } catch (error) {
         this.result = error.message;
         throw error;
