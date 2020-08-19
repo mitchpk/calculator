@@ -1,7 +1,7 @@
 export default class Calculator {
     variables = {
         e: Math.E,
-        pi: Math.PI
+        π: Math.PI
     };
 
     tokenise(query) {
@@ -17,9 +17,9 @@ export default class Calculator {
         }
 
         for (i = 0; i < results.length; i++) {
-            if (isNumber(results[i]) && results[i - 1] == "-") {
+            if (isNumber(results[i]) && results[i - 1] == "−") {
                 if (results[i - 2] === undefined || results[i - 2] === "(") {
-                    results[i] = "-" + results[i];
+                    results[i] = "−" + results[i];
                     results.splice(i - 1, 1);
                 }
             }
@@ -62,7 +62,7 @@ export default class Calculator {
         }
 
         function isName(token) {
-            return token !== undefined && token.match(/^[A-Za-z]+$/) !== null;
+            return token !== undefined && (token == "π" || token.match(/^[A-Za-z]+$/) !== null);
         }
 
         function parseExpression() {
@@ -107,7 +107,7 @@ export default class Calculator {
         function parseMultiplication() {
             var expression = parseExponentiation();
             var token = peek();
-            while (token === "*" || token === "/") {
+            while (token === "×" || token === "÷") {
                 consume(token);
                 var rhs = parseExponentiation();
                 expression = { type: token, left: expression, right: rhs };
@@ -120,7 +120,7 @@ export default class Calculator {
         function parseAddition() {
             var expression = parseMultiplication();
             var token = peek();
-            while (token === "+" || token === "-") {
+            while (token === "+" || token === "−") {
                 consume(token);
                 var rhs = parseMultiplication();
                 expression = { type: token, left: expression, right: rhs };
@@ -148,9 +148,9 @@ export default class Calculator {
             case "number": return parseFloat(branch.value);
             case "name": return this.variables[branch.id] || 0;
             case "+": return this.evaluate(branch.left) + this.evaluate(branch.right);
-            case "-": return this.evaluate(branch.left) - this.evaluate(branch.right);
-            case "*": return this.evaluate(branch.left) * this.evaluate(branch.right);
-            case "/":
+            case "−": return this.evaluate(branch.left) - this.evaluate(branch.right);
+            case "×": return this.evaluate(branch.left) * this.evaluate(branch.right);
+            case "÷":
                 if (this.evaluate(branch.right) === 0)
                     throw new Error("division by zero");
                 return this.evaluate(branch.left) / this.evaluate(branch.right);
