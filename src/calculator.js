@@ -50,7 +50,9 @@ export default class Calculator {
                 case "tan":
                 case "log":
                 case "ln":
-                case "sqrt":
+                case "arcsin":
+                case "arccos":
+                case "arctan":
                     result = true;
             }
 
@@ -58,7 +60,7 @@ export default class Calculator {
         }
 
         function isNumber(token) {
-            return token !== undefined && token.match(/^-?\d*\.?\d+$/) !== null;
+            return token !== undefined && token.match(/^−?\d*\.?\d+$/) !== null;
         }
 
         function isName(token) {
@@ -144,8 +146,10 @@ export default class Calculator {
             case "tan": return Math.tan(this.evaluate(branch.argument));
             case "log": return Math.log10(this.evaluate(branch.argument));
             case "ln": return Math.log(this.evaluate(branch.argument));
-            case "sqrt": return Math.sqrt(this.evaluate(branch.argument));
-            case "number": return parseFloat(branch.value);
+            case "arcsin": return Math.asin(this.evaluate(branch.argument));
+            case "arccos": return Math.acos(this.evaluate(branch.argument));
+            case "arctan": return Math.atan(this.evaluate(branch.argument));
+            case "number": return parseFloat(branch.value.replace("−", "-"));
             case "name": return this.variables[branch.id] || 0;
             case "+": return this.evaluate(branch.left) + this.evaluate(branch.right);
             case "−": return this.evaluate(branch.left) - this.evaluate(branch.right);
