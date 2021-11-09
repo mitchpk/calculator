@@ -73,7 +73,7 @@ export default class Calculator {
             if (isFunction(token)) {
                 consume(token);
                 let functionType = token;
-                token = parseExpression();
+                token = parseExponentiation();
                 return { type: functionType, argument: token };
             } else if (isNumber(token)) {
                 consume(token);
